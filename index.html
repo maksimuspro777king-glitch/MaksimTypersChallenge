@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тренажёр слепой печати</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+        
+        .main-content {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .lessons-panel {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(30, 30, 50, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .training-area {
+            flex: 2;
+            min-width: 500px;
+            background: rgba(30, 30, 50, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .lesson-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+        
+        .lesson-item {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: rgba(50, 50, 80, 0.6);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .lesson-item:hover {
+            background: rgba(70, 70, 100, 0.8);
+            transform: translateX(5px);
+        }
+        
+        .lesson-item.active {
+            background: rgba(80, 120, 200, 0.8);
+            box-shadow: 0 0 10px rgba(100, 150, 255, 0.5);
+        }
+        
+        .lesson-progress {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        .lesson-title {
+            font-size: 1.1rem;
+        }
+        
+        .mini-lessons {
+            margin-top: 20px;
+            background: rgba(40, 40, 60, 0.6);
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .mini-lesson-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: rgba(60, 60, 90, 0.6);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .mini-lesson-item:hover {
+            background: rgba(80, 80, 120, 0.8);
+        }
+        
+        .mini-lesson-item.active {
+            background: rgba(100, 140, 220, 0.8);
+        }
+        
+        .text-display {
+            background: rgba(20, 20, 40, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            min-height: 120px;
+            font-size: 1.4rem;
+            line-height: 1.6;
+            letter-spacing: 1px;
+        }
+        
+        .current-char {
+            background-color: rgba(255, 255, 100, 0.3);
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        
+        .correct {
+            color: #7cfc00;
+        }
+        
+        .incorrect {
+            color: #ff4500;
+            text-decoration: underline;
+        }
+        
+        .input-area {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        #user-input {
+            flex: 1;
+            padding: 15px;
+            font-size: 1.2rem;
+            background: rgba(20, 20, 40, 0.9);
+            border: 2px solid rgba(100, 100, 200, 0.5);
+            border-radius: 8px;
+            color: white;
+            outline: none;
+        }
+        
+        #user-input:focus {
+            border-color: rgba(100, 150, 255, 0.8);
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(20, 20, 40, 0.9);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #fdbb2d;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .keyboard-container {
+            position: relative;
+            background: rgba(20, 20, 40, 0.9);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .keyboard {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        
+        .key {
+            width: 50px;
+            height: 50px;
+            margin: 0 4px;
+            background: rgba(60, 60, 100, 0.8);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 4px 0 rgba(40, 40, 80, 0.9);
+            transition: all 0.1s;
+            position: relative;
+            z-index: 3;
+        }
+        
+        .key.active {
+            background: rgba(100, 150, 255, 0.9);
+            transform: translateY(4px);
+            box-shadow: 0 0 0 rgba(40, 40, 80, 0.9);
+        }
+        
+        .key.space {
+            width: 300px;
+        }
+        
+        .finger-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .finger {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1;
+            border: 2px solid white;
+        }
+        
+        .finger.active {
+            opacity: 0.9;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .finger-little-left { background-color: rgba(255, 100, 100, 0.9); }
+        .finger-ring-left { background-color: rgba(255, 200, 100, 0.9); }
+        .finger-middle-left { background-color: rgba(100, 255, 100, 0.9); }
+        .finger-index-left { background-color: rgba(100, 200, 255, 0.9); }
+        .finger-index-right { background-color: rgba(200, 100, 255, 0.9); }
+        .finger-middle-right { background-color: rgba(255, 100, 200, 0.9); }
+        .finger-ring-right { background-color: rgba(100, 255, 200, 0.9); }
+        .finger-little-right { background-color: rgba(200, 200, 100, 0.9); }
+        .finger-thumb { background-color: rgba(150, 150, 150, 0.9); }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(to right, #1a2a6c, #b21f1f);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .completed {
+            color: #7cfc00;
+        }
+        
+        .instructions {
+            background: rgba(40, 40, 60, 0.6);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .current-finger-hint {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            min-height: 30px;
+            font-weight: bold;
+            color: #fdbb2d;
+        }
+        
+        .lesson-description {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .key {
+                width: 30px;
+                height: 30px;
+                font-size: 0.8rem;
+            }
+            
+            .key.space {
+                width: 150px;
+            }
+            
+            .finger {
+                width: 25px;
+                height: 25px;
+                font-size: 0.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Тренажёр слепой печати</h1>
+            <p class="subtitle">10 уроков с пошаговым обучением и подсветкой пальцев</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="lessons-panel">
+                <h2>Основные уроки</h2>
+                <ul class="lesson-list" id="lesson-list">
+                    <!-- Уроки будут добавлены через JavaScript -->
+                </ul>
+                
+                <div class="mini-lessons">
+                    <h3>Мини-уроки</h3>
+                    <div id="mini-lessons-container">
+                        <!-- Мини-уроки будут добавлены через JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button id="reset-btn">Сбросить прогресс</button>
+                </div>
+                
+                <div class="instructions">
+                    <h3>Как пользоваться:</h3>
+                    <p>1. Выберите урок и мини-урок</p>
+                    <p>2. Нажмите "Начать урок"</p>
+                    <p>3. Следуйте подсветке пальцев</p>
+                    <p>4. Старайтесь не смотреть на клавиатуру</p>
+                </div>
+            </div>
+            
+            <div class="training-area">
+                <div class="current-finger-hint" id="finger-hint">
+                    Начните урок, чтобы увидеть подсказки
+                </div>
+                
+                <div class="text-display" id="text-display">
+                    Начните урок, чтобы увидеть текст для тренировки
+                </div>
+                
+                <div class="input-area">
+                    <input type="text" id="user-input" placeholder="Начните печатать здесь..." autocomplete="off">
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="wpm">0</div>
+                        <div class="stat-label">зн./мин</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="accuracy">0%</div>
+                        <div class="stat-label">точность</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="progress">0%</div>
+                        <div class="stat-label">прогресс</div>
+                    </div>
+                </div>
+                
+                <div class="keyboard-container">
+                    <div class="finger-overlay" id="finger-overlay">
+                        <!-- Пальцы будут добавлены через JavaScript -->
+                    </div>
+                    <div class="keyboard">
+                        <div class="keyboard-row">
+                            <div class="key" data-key="ё">ё</div>
+                            <div class="key" data-key="1">1</div>
+                            <div class="key" data-key="2">2</div>
+                            <div class="key" data-key="3">3</div>
+                            <div class="key" data-key="4">4</div>
+                            <div class="key" data-key="5">5</div>
+                            <div class="key" data-key="6">6</div>
+                            <div class="key" data-key="7">7</div>
+                            <div class="key" data-key="8">8</div>
+                            <div class="key" data-key="9">9</div>
+                            <div class="key" data-key="0">0</div>
+                            <div class="key" data-key="-">-</div>
+                            <div class="key" data-key="=">=</div>
+                        </div>
+                        <div class="keyboard-row">
+                            <div class="key" data-key="й">й</div>
+                            <div class="key" data-key="ц">ц</div>
+                            <div class="key" data-key="у">у</div>
+                            <div class="key" data-key="к">к</div>
+                            <div class="key" data-key="е">е</div>
+                            <div class="key" data-key="н">н</div>
+                            <div class="key" data-key="г">г</div>
+                            <div class="key" data-key="ш">ш</div>
+                            <div class="key" data-key="щ">щ</div>
+                            <div class="key" data-key="з">з</div>
+                            <div class="key" data-key="х">х</div>
+                            <div class="key" data-key="ъ">ъ</div>
+                        </div>
+                        <div class="keyboard-row">
+                            <div class="key" data-key="ф">ф</div>
+                            <div class="key" data-key="ы">ы</div>
+                            <div class="key" data-key="в">в</div>
+                            <div class="key" data-key="а">а</div>
+                            <div class="key" data-key="п">п</div>
+                            <div class="key" data-key="р">р</div>
+                            <div class="key" data-key="о">о</div>
+                            <div class="key" data-key="л">л</div>
+                            <div class="key" data-key="д">д</div>
+                            <div class="key" data-key="ж">ж</div>
+                            <div class="key" data-key="э">э</div>
+                        </div>
+                        <div class="keyboard-row">
+                            <div class="key" data-key="я">я</div>
+                            <div class="key" data-key="ч">ч</div>
+                            <div class="key" data-key="с">с</div>
+                            <div class="key" data-key="м">м</div>
+                            <div class="key" data-key="и">и</div>
+                            <div class="key" data-key="т">т</div>
+                            <div class="key" data-key="ь">ь</div>
+                            <div class="key" data-key="б">б</div>
+                            <div class="key" data-key="ю">ю</div>
+                        </div>
+                        <div class="keyboard-row">
+                            <div class="key space" data-key=" ">ПРОБЕЛ</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button id="start-btn">Начать урок</button>
+                    <button id="next-btn">Следующий урок</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Данные уроков
+        const lessons = [
+            {
+                title: "Основной ряд",
+                description: "Изучите основной ряд клавиатуры",
+                miniLessons: [
+                    { title: "Ф Ы В А", text: "фыва фыва фыва фыва фыва фыва фыва фыва фыва фыва" },
+                    { title: "О Л Д Ж", text: "олдж олдж олдж олдж олдж олдж олдж олдж олдж олдж" },
+                    { title: "ФЫВА ОЛДЖ", text: "фыва олдж фыва олдж фыва олдж фыва олдж фыва олдж" },
+                    { title: "П Р", text: "пр пр пр пр пр пр пр пр пр пр пр пр пр пр пр" },
+                    { title: "ФЫВА ПРО ЛДЖ", text: "фыва про лдж фыва про лдж фыва про лдж фыва про лдж" }
+                ]
+            },
+            {
+                title: "Верхний ряд",
+                description: "Освойте верхний ряд клавиатуры",
+                miniLessons: [
+                    { title: "Й Ц У К", text: "йцук йцук йцук йцук йцук йцук йцук йцук йцук йцук" },
+                    { title: "Е Н Г Ш", text: "енгш енгш енгш енгш енгш енгш енгш енгш енгш енгш" },
+                    { title: "ЙЦУК ЕНГШ", text: "йцук енгш йцук енгш йцук енгш йцук енгш йцук енгш" },
+                    { title: "Щ З Х Ъ", text: "щзхъ щзхъ щзхъ щзхъ щзхъ щзхъ щзхъ щзхъ щзхъ щзхъ" },
+                    { title: "ЙЦУКЕН ГШЩЗХЪ", text: "йцукен гшщзхъ йцукен гшщзхъ йцукен гшщзхъ йцукен гшщзхъ" }
+                ]
+            },
+            {
+                title: "Нижний ряд",
+                description: "Потренируйтесь на нижнем ряду",
+                miniLessons: [
+                    { title: "Я Ч С М", text: "ячсм ячсм ячсм ячсм ячсм ячсм ячсм ячсм ячсм ячсм" },
+                    { title: "И Т Ь Б", text: "итьб итьб итьб итьб итьб итьб итьб итьб итьб итьб" },
+                    { title: "ЯЧСМ ИТЬБ", text: "ячсм итьб ячсм итьб ячсм итьб ячсм итьб ячсм итьб" },
+                    { title: "Ю", text: "ююю ююю ююю ююю ююю ююю ююю ююю ююю ююю ююю ююю" },
+                    { title: "ЯЧСМИТЬ БЮ", text: "ячсмить бю ячсмить бю ячсмить бю ячсмить бю ячсмить бю" }
+                ]
+            },
+            {
+                title: "Все буквы",
+                description: "Все буквы русского алфавита",
+                miniLessons: [
+                    { title: "Основной + Верхний", text: "фыва йцук фыва йцук фыва йцук фыва йцук фыва йцук" },
+                    { title: "Основной + Нижний", text: "фыва ячсм фыва ячсм фыва ячсм фыва ячсм фыва ячсм" },
+                    { title: "Верхний + Нижний", text: "йцук ячсм йцук ячсм йцук ячсм йцук ячсм йцук ячсм" },
+                    { title: "Смешанные слоги", text: "фойц увак епрл джщш зхъэ бюяч смить" },
+                    { title: "Все буквы", text: "фывапролджэйцукенгшщзхъячсмитьбю фывапролджэйцукенгшщзхъячсмитьбю" }
+                ]
+            },
+            {
+                title: "Цифры",
+                description: "Цифровой ряд клавиатуры",
+                miniLessons: [
+                    { title: "1 2 3 4 5", text: "12345 12345 12345 12345 12345 12345 12345 12345" },
+                    { title: "6 7 8 9 0", text: "67890 67890 67890 67890 67890 67890 67890 67890" },
+                    { title: "Все цифры", text: "1234567890 1234567890 1234567890 1234567890 1234567890" },
+                    { title: "Цифры + буквы", text: "а1 б2 в3 г4 д5 е6 ж7 з8 и9 й0 а1 б2 в3 г4 д5" },
+                    { title: "Простые вычисления", text: "2+2=4 5-3=2 6*7=42 8/2=4 9+1=10 3*3=9 10-5=5" }
+                ]
+            },
+            {
+                title: "Знаки препинания",
+                description: "Основные знаки препинания",
+                miniLessons: [
+                    { title: "Точка и запятая", text: "., ., ., ., ., ., ., ., ., ., ., ., ., ., ." },
+                    { title: "Восклицательный и вопросительный", text: "!? !? !? !? !? !? !? !? !? !? !? !? !?" },
+                    { title: "Двоеточие и точка с запятой", text: ":; :; :; :; :; :; :; :; :; :; :; :; :;" },
+                    { title: "Скобки и кавычки", text: "() \"\" () \"\" () \"\" () \"\" () \"\" () \"\" () \"\"" },
+                    { title: "Все знаки препинания", text: ".,!?;:()\"- .,!?;:()\"- .,!?;:()\"- .,!?;:()\"-" }
+                ]
+            },
+            {
+                title: "Простые слова",
+                description: "Простые слова для тренировки",
+                miniLessons: [
+                    { title: "Короткие слова", text: "дом кот сад мир свет вода огонь дом кот сад мир" },
+                    { title: "Средние слова", text: "окно поле река город улица окно поле река город улица" },
+                    { title: "Длинные слова", text: "программа клавиатура упражнение программа клавиатура упражнение" },
+                    { title: "Разные длины", text: "я мы он она оно они вы ты кто что где когда" },
+                    { title: "Тематические слова", text: "компьютер интернет программа клавиатура монитор мышь" }
+                ]
+            },
+            {
+                title: "Сложные слова",
+                description: "Более сложные слова",
+                miniLessons: [
+                    { title: "Сложные слоги", text: "строй взгляд встречный пространство строительство" },
+                    { title: "Слова с Ъ и Ь", text: "объект подъезд объем предъявить съемка объект подъезд" },
+                    { title: "Слова с приставками", text: "переход представить восстановить преобразование" },
+                    { title: "Сложные термины", text: "программирование алгоритмизация структурирование" },
+                    { title: "Разные сложные слова", text: "электричество фотография гравитация температура" }
+                ]
+            },
+            {
+                title: "Короткие предложения",
+                description: "Короткие предложения",
+                miniLessons: [
+                    { title: "Простые предложения", text: "Я иду домой. Он читает книгу. Мы пишем текст." },
+                    { title: "Вопросительные предложения", text: "Как дела? Что нового? Где ты был? Кто это?" },
+                    { title: "Восклицательные предложения", text: "Как красиво! Очень интересно! Отлично работает!" },
+                    { title: "Сложные предложения", text: "Когда я пришел, он уже ушел. Если будет дождь, мы останемся дома." },
+                    { title: "Разные типы предложений", text: "Привет! Как твои дела? Я сегодня много работал. Это было интересно." }
+                ]
+            },
+            {
+                title: "Текст",
+                description: "Полноценный текст для тренировки",
+                miniLessons: [
+                    { title: "Короткий текст", text: "Слепая печать - это метод набора текста без необходимости смотреть на клавиатуру." },
+                    { title: "Средний текст", text: "Этот навык значительно увеличивает скорость и точность печати. Регулярные тренировки помогут вам освоить этот полезный навык." },
+                    { title: "Длинный текст", text: "Слепая печать позволяет сосредоточиться на содержании текста, а не на процессе печати. Это особенно полезно для программистов, писателей и всех, кто много работает с текстом." },
+                    { title: "Текст с цифрами", text: "Исследования показывают, что средняя скорость печати составляет 40 слов в минуту, но с помощью слепой печати можно достичь 60-80 слов в минуту." },
+                    { title: "Сложный текст", text: "Освоение слепой печати требует времени и терпения, но результат того стоит. Начните с основных рядов, постепенно переходя к более сложным комбинациям. Практикуйтесь регулярно, и скоро вы сможете печатать быстро и без ошибок." }
+                ]
+            }
+        ];
+
+        // Соответствие клавиш пальцам
+        const fingerMap = {
+            'ё': 'little-left', '1': 'ring-left', '2': 'middle-left', '3': 'index-left', '4': 'index-left',
+            '5': 'index-right', '6': 'index-right', '7': 'middle-right', '8': 'ring-right', '9': 'little-right', 
+            '0': 'little-right', '-': 'little-right', '=': 'little-right',
+            'й': 'little-left', 'ц': 'ring-left', 'у': 'middle-left', 'к': 'index-left', 'е': 'index-left',
+            'н': 'index-right', 'г': 'index-right', 'ш': 'middle-right', 'щ': 'ring-right', 'з': 'little-right', 
+            'х': 'little-right', 'ъ': 'little-right',
+            'ф': 'little-left', 'ы': 'ring-left', 'в': 'middle-left', 'а': 'index-left', 'п': 'index-left',
+            'р': 'index-right', 'о': 'index-right', 'л': 'middle-right', 'д': 'ring-right', 'ж': 'little-right', 
+            'э': 'little-right',
+            'я': 'little-left', 'ч': 'ring-left', 'с': 'middle-left', 'м': 'index-left', 'и': 'index-left',
+            'т': 'index-right', 'ь': 'index-right', 'б': 'middle-right', 'ю': 'ring-right',
+            ' ': 'thumb'
+        };
+
+        // Названия пальцев для отображения
+        const fingerNames = {
+            'little-left': 'Левый мизинец',
+            'ring-left': 'Левый безымянный',
+            'middle-left': 'Левый средний',
+            'index-left': 'Левый указательный',
+            'index-right': 'Правый указательный',
+            'middle-right': 'Правый средний',
+            'ring-right': 'Правый безымянный',
+            'little-right': 'Правый мизинец',
+            'thumb': 'Большой палец'
+        };
+
+        // Координаты пальцев относительно клавиш
+        const fingerPositions = {
+            'little-left': { top: 10, left: 20 },
+            'ring-left': { top: 10, left: 80 },
+            'middle-left': { top: 10, left: 140 },
+            'index-left': { top: 10, left: 200 },
+            'index-right': { top: 10, left: 350 },
+            'middle-right': { top: 10, left: 410 },
+            'ring-right': { top: 10, left: 470 },
+            'little-right': { top: 10, left: 530 },
+            'thumb': { top: 200, left: 300 }
+        };
+
+        // Элементы DOM
+        const lessonList = document.getElementById('lesson-list');
+        const miniLessonsContainer = document.getElementById('mini-lessons-container');
+        const textDisplay = document.getElementById('text-display');
+        const userInput = document.getElementById('user-input');
+        const startBtn = document.getElementById('start-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const wpmElement = document.getElementById('wpm');
+        const accuracyElement = document.getElementById('accuracy');
+        const progressElement = document.getElementById('progress');
+        const fingerHint = document.getElementById('finger-hint');
+        const fingerOverlay = document.getElementById('finger-overlay');
+        const keys = document.querySelectorAll('.key');
+        
+        // Переменные состояния
+        let currentLesson = 0;
+        let currentMiniLesson = 0;
+        let startTime = null;
+        let errors = 0;
+        let totalChars = 0;
+        let correctChars = 0;
+        let lessonProgress = Array(10).fill(0);
+        let miniLessonProgress = Array(10).fill(0).map(() => Array(5).fill(0));
+        let isActive = false;
+        let currentFinger = null;
+        
+        // Инициализация
+        function init() {
+            // Загрузка прогресса из localStorage
+            const savedProgress = localStorage.getItem('typingProgress');
+            if (savedProgress) {
+                const progressData = JSON.parse(savedProgress);
+                lessonProgress = progressData.lessonProgress || Array(10).fill(0);
+                miniLessonProgress = progressData.miniLessonProgress || Array(10).fill(0).map(() => Array(5).fill(0));
+                updateProgressBars();
+            }
+            
+            // Создание пальцев
+            createFingers();
+            
+            // Создание списка уроков
+            createLessonList();
+            
+            // Обработчики событий
+            startBtn.addEventListener('click', startLesson);
+            nextBtn.addEventListener('click', nextLesson);
+            resetBtn.addEventListener('click', resetProgress);
+            
+            userInput.addEventListener('input', handleInput);
+            userInput.addEventListener('keydown', handleKeyDown);
+            userInput.addEventListener('keyup', handleKeyUp);
+            
+            // Выделение первого урока
+            selectLesson(0);
+        }
+        
+        // Создание пальцев
+        function createFingers() {
+            for (const [fingerType, position] of Object.entries(fingerPositions)) {
+                const finger = document.createElement('div');
+                finger.className = `finger finger-${fingerType}`;
+                finger.style.top = `${position.top}px`;
+                finger.style.left = `${position.left}px`;
+                finger.textContent = fingerNames[fingerType].split(' ')[1] || fingerNames[fingerType];
+                fingerOverlay.appendChild(finger);
+            }
+        }
+        
+        // Создание списка уроков
+        function createLessonList() {
+            lessons.forEach((lesson, index) => {
+                const lessonItem = document.createElement('li');
+                lessonItem.className = `lesson-item ${index === 0 ? 'active' : ''}`;
+                lessonItem.dataset.lesson = index;
+                
+                const lessonTitle = document.createElement('span');
+                lessonTitle.className = 'lesson-title';
+                lessonTitle.textContent = `Урок ${index + 1}: ${lesson.title}`;
+                
+                const lessonProgress = document.createElement('span');
+                lessonProgress.className = 'lesson-progress';
+                lessonProgress.textContent = '0%';
+                
+                lessonItem.appendChild(lessonTitle);
+                lessonItem.appendChild(lessonProgress);
+                
+                lessonItem.addEventListener('click', () => {
+                    selectLesson(index);
+                });
+                
+                lessonList.appendChild(lessonItem);
+            });
+        }
+        
+        // Выбор урока
+        function selectLesson(lessonIndex) {
+            currentLesson = lessonIndex;
+            currentMiniLesson = 0;
+            
+            // Обновление активного урока
+            document.querySelectorAll('.lesson-item').forEach((item, index) => {
+                if (index === lessonIndex) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+            
+            // Создание мини-уроков
+            createMiniLessons(lessonIndex);
+            
+            // Отображение текста урока
+            displayLessonText();
+            
+            // Сброс состояния
+            resetTrainingState();
+        }
+        
+        // Создание мини-уроков
+        function createMiniLessons(lessonIndex) {
+            miniLessonsContainer.innerHTML = '';
+            const lesson = lessons[lessonIndex];
+            
+            lesson.miniLessons.forEach((miniLesson, index) => {
+                const miniLessonItem = document.createElement('div');
+                miniLessonItem.className = `mini-lesson-item ${index === 0 ? 'active' : ''}`;
+                miniLessonItem.dataset.miniLesson = index;
+                miniLessonItem.textContent = `Мини-урок ${index + 1}: ${miniLesson.title}`;
+                
+                miniLessonItem.addEventListener('click', () => {
+                    currentMiniLesson = index;
+                    document.querySelectorAll('.mini-lesson-item').forEach((item, i) => {
+                        if (i === index) {
+                            item.classList.add('active');
+                        } else {
+                            item.classList.remove('active');
+                        }
+                    });
+                    displayLessonText();
+                    resetTrainingState();
+                });
+                
+                miniLessonsContainer.appendChild(miniLessonItem);
+            });
+        }
+        
+        // Отображение текста урока
+        function displayLessonText() {
+            textDisplay.innerHTML = '';
+            const lesson = lessons[currentLesson];
+            const miniLesson = lesson.miniLessons[currentMiniLesson];
+            
+            // Создание визуализации текста
+            miniLesson.text.split('').forEach(char => {
+                const span = document.createElement('span');
+                span.textContent = char;
+                textDisplay.appendChild(span);
+            });
+            
+            // Обновление описания
+            fingerHint.textContent = `Урок ${currentLesson + 1}: ${lesson.title} - ${miniLesson.title}`;
+        }
+        
+        // Сброс состояния тренировки
+        function resetTrainingState() {
+            userInput.value = '';
+            userInput.disabled = true;
+            startBtn.textContent = 'Начать урок';
+            isActive = false;
+            errors = 0;
+            totalChars = 0;
+            correctChars = 0;
+            currentFinger = null;
+            updateStats();
+            
+            // Сброс подсветки символов
+            const chars = textDisplay.querySelectorAll('span');
+            chars.forEach(char => {
+                char.className = '';
+            });
+            
+            // Сброс подсветки пальцев
+            document.querySelectorAll('.finger').forEach(finger => {
+                finger.classList.remove('active');
+            });
+            
+            // Сброс подсветки клавиш
+            keys.forEach(key => {
+                key.classList.remove('active');
+            });
+            
+            if (chars.length > 0) {
+                chars[0].classList.add('current-char');
+            }
+        }
+        
+        // Начало урока
+        function startLesson() {
+            if (isActive) {
+                // Перезапуск урока
+                resetTrainingState();
+            }
+            
+            userInput.disabled = false;
+            userInput.focus();
+            startBtn.textContent = 'Перезапустить';
+            isActive = true;
+            startTime = new Date();
+        }
+        
+        // Следующий урок
+        function nextLesson() {
+            if (currentMiniLesson < lessons[currentLesson].miniLessons.length - 1) {
+                // Следующий мини-урок
+                currentMiniLesson++;
+                document.querySelectorAll('.mini-lesson-item').forEach((item, i) => {
+                    if (i === currentMiniLesson) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+                displayLessonText();
+                resetTrainingState();
+            } else if (currentLesson < lessons.length - 1) {
+                // Следующий основной урок
+                selectLesson(currentLesson + 1);
+            } else {
+                alert('Поздравляем! Вы завершили все уроки!');
+            }
+        }
+        
+        // Сброс прогресса
+        function resetProgress() {
+            if (confirm('Вы уверены, что хотите сбросить весь прогресс?')) {
+                lessonProgress = Array(10).fill(0);
+                miniLessonProgress = Array(10).fill(0).map(() => Array(5).fill(0));
+                localStorage.setItem('typingProgress', JSON.stringify({
+                    lessonProgress,
+                    miniLessonProgress
+                }));
+                updateProgressBars();
+                selectLesson(0);
+            }
+        }
+        
+        // Обработка ввода
+        function handleInput() {
+            if (!isActive) return;
+            
+            const inputText = userInput.value;
+            const lesson = lessons[currentLesson];
+            const miniLesson = lesson.miniLessons[currentMiniLesson];
+            const lessonText = miniLesson.text;
+            const chars = textDisplay.querySelectorAll('span');
+            
+            // Сброс всех классов
+            chars.forEach(char => {
+                char.classList.remove('current-char', 'correct', 'incorrect');
+            });
+            
+            // Проверка каждого символа
+            for (let i = 0; i < Math.max(inputText.length, lessonText.length); i++) {
+                if (i < inputText.length) {
+                    if (i < lessonText.length) {
+                        if (inputText[i] === lessonText[i]) {
+                            chars[i].classList.add('correct');
+                            if (i === inputText.length - 1) {
+                                chars[i].classList.add('current-char');
+                            }
+                        } else {
+                            chars[i].classList.add('incorrect');
+                            if (i === inputText.length - 1) {
+                                chars[i].classList.add('current-char');
+                            }
+                        }
+                    }
+                } else if (i === inputText.length) {
+                    chars[i].classList.add('current-char');
+                }
+            }
+            
+            // Подсчет статистики
+            totalChars = inputText.length;
+            correctChars = 0;
+            
+            for (let i = 0; i < inputText.length && i < lessonText.length; i++) {
+                if (inputText[i] === lessonText[i]) {
+                    correctChars++;
+                }
+            }
+            
+            errors = totalChars - correctChars;
+            
+            // Проверка завершения урока
+            if (inputText.length === lessonText.length) {
+                completeLesson();
+            }
+            
+            updateStats();
+        }
+        
+        // Обработка нажатия клавиш
+        function handleKeyDown(e) {
+            if (!isActive) return;
+            
+            const key = e.key.toLowerCase();
+            const keyElement = document.querySelector(`.key[data-key="${key}"]`);
+            
+            if (keyElement) {
+                keyElement.classList.add('active');
+                
+                // Подсветка соответствующего пальца
+                const fingerType = fingerMap[key];
+                if (fingerType && fingerType !== currentFinger) {
+                    // Сброс предыдущего активного пальца
+                    if (currentFinger) {
+                        document.querySelector(`.finger[data-finger="${currentFinger}"]`).classList.remove('active');
+                    }
+                    
+                    // Подсветка нового пальца
+                    currentFinger = fingerType;
+                    document.querySelector(`.finger[data-finger="${fingerType}"]`).classList.add('active');
+                }
+            }
+            
+            // Пробел
+            if (e.key === ' ') {
+                document.querySelector('.key.space').classList.add('active');
+                
+                // Подсветка большого пальца
+                const fingerType = 'thumb';
+                if (fingerType !== currentFinger) {
+                    if (currentFinger) {
+                        document.querySelector(`.finger[data-finger="${currentFinger}"]`).classList.remove('active');
+                    }
+                    
+                    currentFinger = fingerType;
+                    document.querySelector(`.finger[data-finger="${fingerType}"]`).classList.add('active');
+                }
+            }
+        }
+        
+        // Обработка отпускания клавиш
+        function handleKeyUp(e) {
+            const key = e.key.toLowerCase();
+            const keyElement = document.querySelector(`.key[data-key="${key}"]`);
+            
+            if (keyElement) {
+                keyElement.classList.remove('active');
+            }
+            
+            // Пробел
+            if (e.key === ' ') {
+                document.querySelector('.key.space').classList.remove('active');
+            }
+        }
+        
+        // Завершение урока
+        function completeLesson() {
+            isActive = false;
+            userInput.disabled = true;
+            
+            // Расчет точности
+            const accuracy = totalChars > 0 ? Math.round((correctChars / totalChars) * 100) : 0;
+            
+            // Расчет скорости (символов в минуту)
+            const endTime = new Date();
+            const timeInMinutes = (endTime - startTime) / 60000;
+            const wpm = Math.round(totalChars / timeInMinutes);
+            
+            // Обновление прогресса
+            const newProgress = Math.max(miniLessonProgress[currentLesson][currentMiniLesson], accuracy);
+            miniLessonProgress[currentLesson][currentMiniLesson] = newProgress;
+            
+            // Расчет прогресса урока
+            const lessonAccuracy = Math.round(
+                miniLessonProgress[currentLesson].reduce((sum, acc) => sum + acc, 0) / 
+                miniLessonProgress[currentLesson].length
+            );
+            lessonProgress[currentLesson] = lessonAccuracy;
+            
+            // Сохранение в localStorage
+            localStorage.setItem('typingProgress', JSON.stringify({
+                lessonProgress,
+                miniLessonProgress
+            }));
+            
+            // Обновление интерфейса
+            updateProgressBars();
+            
+            // Сброс подсветки пальцев
+            if (currentFinger) {
+                document.querySelector(`.finger[data-finger="${currentFinger}"]`).classList.remove('active');
+                currentFinger = null;
+            }
+            
+            // Показ результатов
+            alert(`Урок завершен!\nСкорость: ${wpm} зн./мин\nТочность: ${accuracy}%`);
+            
+            // Автопереход к следующему уроку, если точность > 80%
+            if (accuracy >= 80) {
+                setTimeout(() => {
+                    nextLesson();
+                    startLesson();
+                }, 1000);
+            }
+        }
+        
+        // Обновление статистики
+        function updateStats() {
+            // Расчет точности
+            const accuracy = totalChars > 0 ? Math.round((correctChars / totalChars) * 100) : 0;
+            
+            // Расчет скорости (символов в минуту)
+            let wpm = 0;
+            if (startTime && isActive) {
+                const currentTime = new Date();
+                const timeInMinutes = (currentTime - startTime) / 60000;
+                wpm = Math.round(totalChars / timeInMinutes);
+            }
+            
+            // Прогресс текущего урока
+            const lesson = lessons[currentLesson];
+            const miniLesson = lesson.miniLessons[currentMiniLesson];
+            const progress = totalChars > 0 ? Math.round((totalChars / miniLesson.text.length) * 100) : 0;
+            
+            // Обновление элементов
+            wpmElement.textContent = wpm;
+            accuracyElement.textContent = `${accuracy}%`;
+            progressElement.textContent = `${progress}%`;
+        }
+        
+        // Обновление прогресс-баров
+        function updateProgressBars() {
+            document.querySelectorAll('.lesson-item').forEach((item, index) => {
+                const progress = lessonProgress[index];
+                const progressElement = item.querySelector('.lesson-progress');
+                progressElement.textContent = `${progress}%`;
+                
+                if (progress >= 80) {
+                    progressElement.classList.add('completed');
+                } else {
+                    progressElement.classList.remove('completed');
+                }
+            });
+        }
+        
+        // Инициализация при загрузке
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
